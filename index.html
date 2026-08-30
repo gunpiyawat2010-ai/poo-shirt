@@ -162,236 +162,614 @@ placeholder="กรอกชื่อของคุณ"
 id="number"
 placeholder="เช่น 16"
 >
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>จองเสื้อปุ๋ย</title>
+    <!-- นำเข้าฟอนต์ Kanit เพื่อความทันสมัยและอ่านง่าย -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+        }
 
-<label>
-เลือกสีเสื้อ
-</label>
+        body {
+            background-color: #f3f6f9;
+            color: #333;
+            padding: 20px 15px;
+            display: flex;
+            justify-content: center;
+        }
 
-<div class="colors">
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+        }
 
-<button
-class="color-button"
-onclick="selectColor('แดง', this)"
->
-🔴 แดง
-</button>
+        /* --- Header Section --- */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-<button
-class="color-button"
-onclick="selectColor('แสด', this)"
->
-🟠 แสด
-</button>
+        .header h1 {
+            font-size: 32px;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
 
-<button
-class="color-button"
-onclick="selectColor('เขียว', this)"
->
-🟢 เขียว
-</button>
+        .badge-free {
+            display: inline-block;
+            background: #ffecb3;
+            color: #d97706;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
 
-</div>
+        .sponsor {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            display: inline-block;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            margin-bottom: 10px;
+        }
 
-<button
-class="submit"
-onclick="reserve()"
->
-🎁 ยืนยันการจอง
-</button>
+        .sponsor-title {
+            font-size: 11px;
+            color: #888;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
 
-<div
-id="message"
-class="message"
-></div>
+        .sponsor-name {
+            font-weight: 600;
+            color: #2563eb;
+            font-size: 15px;
+        }
+
+        .gift-text {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* --- Stock Cards --- */
+        .stock-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .stock-card {
+            background: white;
+            padding: 15px 10px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stock-color-name {
+            font-weight: 500;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .stock-amount {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .stock-amount span {
+            font-size: 22px;
+            font-weight: 700;
+            color: #111;
+        }
+
+        /* Progress Bar */
+        .progress-bg {
+            width: 100%;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        #red-progress { background: #ef4444; }
+        #orange-progress { background: #f97316; }
+        #green-progress { background: #22c55e; }
+
+        .stock-status {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-available { color: #22c55e; }
+        .status-low { color: #f59e0b; }
+        .status-empty { color: #ef4444; }
+
+        /* --- Form Card --- */
+        .form-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #111;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #444;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            background: #f9fafb;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        /* --- Color Selection Buttons --- */
+        .colors {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .color-button {
+            padding: 12px 5px;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            background: white;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .color-button:active:not(.disabled) {
+            transform: scale(0.96);
+        }
+
+        .color-button.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .check-mark {
+            display: none;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #2563eb;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 12px;
+            line-height: 22px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        .color-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f3f4f6;
+            border-color: #e5e7eb;
+            filter: grayscale(100%);
+        }
+
+        /* --- Submit Button --- */
+        button.submit {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: #111;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(17, 17, 17, 0.2);
+        }
+
+        button.submit:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 2px 8px rgba(17, 17, 17, 0.2);
+        }
+
+        button.submit:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* --- Alerts / Messages --- */
+        .message-box {
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 500;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .message-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Success State --- */
+        .success-card {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            display: none;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .success-card h2 {
+            color: #111;
+            margin-bottom: 10px;
+        }
+
+        .success-card p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .booked-color {
+            background: #f8fafc;
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 16px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .cheer-text {
+            color: #2563eb;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Header -->
+    <header class="header">
+        <h1>👕 เสื้อปุ๋ย</h1>
+        <div class="badge-free">แจกฟรี • ฟรีไซส์</div>
+        
+        <div class="sponsor">
+            <div class="sponsor-title">Supported By</div>
+            <div class="sponsor-name">บริษัท แก้งคร้อมั่นคง</div>
+        </div>
+        
+        <div class="gift-text">🎁 มอบให้เพื่อน ๆ ในห้องฟรี</div>
+    </header>
+
+    <!-- Stock Monitor -->
+    <div class="stock-container">
+        <!-- แดง -->
+        <div class="stock-card">
+            <div class="stock-color-name">🔴 แดง</div>
+            <div class="stock-amount">เหลือ <span id="red-num">-</span> ตัว</div>
+            <div class="progress-bg"><div class="progress-fill" id="red-progress" style="width: 100%;"></div></div>
+            <div class="stock-status" id="red-status">กำลังโหลด...</div>
+        </div>
+        <!-- แสด -->
+        <div class="stock-card">
+            <div class="stock-color-name">🟠 แสด</div>
+            <div class="stock-amount">เหลือ <span id="orange-num">-</span> ตัว</div>
+            <div class="progress-bg"><div class="progress-fill" id="orange-progress" style="width: 100%;"></div></div>
+            <div class="stock-status" id="orange-status">กำลังโหลด...</div>
+        </div>
+        <!-- เขียว -->
+        <div class="stock-card">
+            <div class="stock-color-name">🟢 เขียว</div>
+            <div class="stock-amount">เหลือ <span id="green-num">-</span> ตัว</div>
+            <div class="progress-bg"><div class="progress-fill" id="green-progress" style="width: 100%;"></div></div>
+            <div class="stock-status" id="green-status">กำลังโหลด...</div>
+        </div>
+    </div>
+
+    <!-- Main Booking Form -->
+    <div id="booking-section" class="form-card">
+        <div class="section-title">📝 ข้อมูลผู้จอง</div>
+        
+        <div class="input-group">
+            <label>ชื่อ-นามสกุล</label>
+            <input id="name" type="text" placeholder="กรอกชื่อของคุณ">
+        </div>
+        
+        <div class="input-group">
+            <label>เลขที่</label>
+            <input id="number" type="number" placeholder="เช่น 16" inputmode="numeric">
+        </div>
+
+        <div class="section-title" style="margin-top: 25px;">🎨 เลือกสีเสื้อ</div>
+        <div class="colors">
+            <button id="btn-red" class="color-button" onclick="selectColor('แดง', 'btn-red')">
+                <span class="check-mark">✓</span>
+                🔴 แดง
+            </button>
+            <button id="btn-orange" class="color-button" onclick="selectColor('แสด', 'btn-orange')">
+                <span class="check-mark">✓</span>
+                🟠 แสด
+            </button>
+            <button id="btn-green" class="color-button" onclick="selectColor('เขียว', 'btn-green')">
+                <span class="check-mark">✓</span>
+                🟢 เขียว
+            </button>
+        </div>
+
+        <!-- แจ้งเตือน Error ภายในฟอร์ม -->
+        <div id="error-message" class="message-box message-error"></div>
+
+        <button id="submit-btn" class="submit" onclick="reserve()">
+            🎁 ยืนยันการจอง
+        </button>
+    </div>
+
+    <!-- Success Screen (แสดงหลังจองสำเร็จ) -->
+    <div id="success-section" class="success-card">
+        <div class="success-icon">🎉</div>
+        <h2>จองสำเร็จ!</h2>
+        <p>เสื้อของคุณถูกจัดไว้ให้แล้ว ❤️</p>
+        <div id="success-color-text" class="booked-color">
+            สีที่จอง: -
+        </div>
+        <div class="cheer-text">เจอกันตอนรับเสื้อนะครับ 🙌</div>
+    </div>
 
 </div>
 
 <script>
-
 // =================================
-// ใส่ Web App URL ของเรา
+// ส่วนของการเชื่อมต่อ API ยังคงเดิมทั้งหมด
 // =================================
-
-const API_URL =
-"https://script.google.com/macros/s/AKfycbyoQ81-3XzmNN0SriUVAzFqVcieLpstWsF_KJY6B_USmNw2eV90Tu7zrs17OFUjsVN8/exec";
-
-
+const API_URL = "https://script.google.com/macros/s/AKfycbyoQ81-3XzmNN0SriUVAzFqVcieLpstWsF_KJY6B_USmNw2eV90Tu7zrs17OFUjsVN8/exec";
 let selectedColor = "";
 
+// กำหนดจำนวนเสื้อสูงสุดเพื่อนำไปคำนวณ Progress bar (อ้างอิงจากตัวอย่าง 9 ตัว)
+const MAX_STOCK = 9; 
 
-function selectColor(color, button) {
+// ฟังก์ชันเลือกสี (ปรับปรุง UI เล็กน้อยเพื่อรองรับการล็อคปุ่ม)
+function selectColor(color, btnId) {
+    const button = document.getElementById(btnId);
+    
+    // ถ้าปุ่มโดน Disabled ไว้ (สีหมด) ไม่ให้กด
+    if (button.classList.contains("disabled")) return;
 
     selectedColor = color;
 
-    document
-    .querySelectorAll(".color-button")
-    .forEach(btn =>
-        btn.classList.remove("selected")
-    );
+    // ล้างสถานะ selected ของทุกปุ่ม
+    document.querySelectorAll(".color-button").forEach(btn => {
+        btn.classList.remove("selected");
+        btn.querySelector(".check-mark").style.display = "none";
+    });
 
+    // เพิ่มสถานะให้ปุ่มที่เลือก
     button.classList.add("selected");
-
+    button.querySelector(".check-mark").style.display = "block";
+    
+    hideError(); // ซ่อน error หากเคยมี
 }
 
-
+// ฟังก์ชันโหลดข้อมูล (คง Logic fetch เดิม แต่เชื่อมกับ UI ใหม่)
 async function loadStock() {
-
     try {
-
-        const response =
-        await fetch(API_URL);
-
-        const stock =
-        await response.json();
-
-        document.getElementById("red")
-        .textContent = stock["แดง"];
-
-        document.getElementById("orange")
-        .textContent = stock["แสด"];
-
-        document.getElementById("green")
-        .textContent = stock["เขียว"];
-
+        const response = await fetch(API_URL);
+        const stock = await response.json();
+        
+        updateStockUI('red', stock["แดง"], 'btn-red');
+        updateStockUI('orange', stock["แสด"], 'btn-orange');
+        updateStockUI('green', stock["เขียว"], 'btn-green');
+    } catch(error) {
+        console.log("Error loading stock:", error);
     }
-
-    catch(error) {
-
-        console.log(error);
-
-    }
-
 }
 
+// ฟังก์ชันอัปเดต UI หน้าจอสต็อกเสื้อ
+function updateStockUI(colorId, currentStock, btnId) {
+    let stockNum = parseInt(currentStock) || 0;
+    
+    // อัปเดตตัวเลข
+    document.getElementById(colorId + "-num").textContent = stockNum;
+    
+    // อัปเดต Progress Bar
+    let percent = (stockNum / MAX_STOCK) * 100;
+    if (percent > 100) percent = 100;
+    document.getElementById(colorId + "-progress").style.width = percent + "%";
 
+    // อัปเดตสถานะ (เหลือเยอะ, เหลือน้อย, หมด)
+    const statusEl = document.getElementById(colorId + "-status");
+    const btnEl = document.getElementById(btnId);
+
+    if (stockNum === 0) {
+        statusEl.textContent = "❌ หมดแล้ว";
+        statusEl.className = "stock-status status-empty";
+        btnEl.classList.add("disabled");
+        
+        // ถ้าผู้ใช้ดันเลือกสีนี้อยู่แล้วมันหมดพอดี ให้เคลียร์ค่าทิ้ง
+        if (btnEl.classList.contains("selected")) {
+            btnEl.classList.remove("selected");
+            btnEl.querySelector(".check-mark").style.display = "none";
+            selectedColor = "";
+        }
+    } else if (stockNum <= 3) {
+        statusEl.textContent = "⚠️ เหลือน้อย";
+        statusEl.className = "stock-status status-low";
+        btnEl.classList.remove("disabled");
+    } else {
+        statusEl.textContent = "✅ มีของ";
+        statusEl.className = "stock-status status-available";
+        btnEl.classList.remove("disabled");
+    }
+}
+
+// ฟังก์ชันจองเสื้อ (Logic เดิม เพิ่มเติมแค่ UI State)
 async function reserve() {
+    const name = document.getElementById("name").value.trim();
+    const number = document.getElementById("number").value.trim();
+    const submitBtn = document.getElementById("submit-btn");
 
-    const name =
-    document.getElementById("name")
-    .value.trim();
-
-    const number =
-    document.getElementById("number")
-    .value.trim();
-
-
+    // ตรวจสอบข้อมูลให้ครบ
     if (!name || !number || !selectedColor) {
-
-        showMessage(
-            "กรุณากรอกข้อมูลให้ครบ",
-            false
-        );
-
+        showError("⚠️ กรุณากรอกข้อมูลให้ครบก่อนจอง");
         return;
-
     }
 
+    // เปลี่ยนสถานะปุ่มเป็นกำลังจอง
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = "⏳ กำลังจอง...";
+    hideError();
 
     try {
-
-        const response =
-        await fetch(API_URL, {
-
+        const response = await fetch(API_URL, {
             method: "POST",
-
-            headers: {
-                "Content-Type":
-                "text/plain;charset=utf-8"
-            },
-
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({
-
                 name: name,
-
                 number: number,
-
                 color: selectedColor
-
             })
-
         });
 
-
-        const result =
-        await response.json();
-
+        const result = await response.json();
 
         if (result.ok) {
-
-            showMessage(
-                "🎉 จองสำเร็จ! เสื้อของคุณถูกจัดไว้ให้แล้ว ❤️",
-                true
-            );
-
-            document
-            .getElementById("name")
-            .value = "";
-
-            document
-            .getElementById("number")
-            .value = "";
-
-            selectedColor = "";
-
-            document
-            .querySelectorAll(".color-button")
-            .forEach(btn =>
-                btn.classList.remove("selected")
-            );
-
+            // จองสำเร็จ
+            showSuccessScreen();
             loadStock();
-
-        }
-
-        else {
-
-            showMessage(
-                result.message,
-                false
-            );
-
+        } else {
+            // จองไม่สำเร็จ (จำแนก Error)
+            let errorText = result.message;
+            if (errorText.includes("ซ้ำ") || errorText.includes("แล้ว")) {
+                errorText = "⚠️ เลขที่นี้จองเสื้อไปแล้ว";
+            } else if (errorText.includes("หมด")) {
+                errorText = "❌ สีนี้หมดแล้ว ลองเลือกสีอื่นได้เลย";
+            }
+            
+            showError(errorText);
             loadStock();
-
         }
-
+    } catch(error) {
+        showError("⚠️ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่");
+    } finally {
+        // คืนค่าปุ่มกลับมาถ้าเกิดข้อผิดพลาด (ถ้าสำเร็จ UI จะถูกซ่อนไปแล้ว)
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "🎁 ยืนยันการจอง";
     }
-
-    catch(error) {
-
-        showMessage(
-            "เกิดข้อผิดพลาด กรุณาลองใหม่",
-            false
-        );
-
-    }
-
 }
 
-
-function showMessage(text, success) {
-
-    const message =
-    document.getElementById("message");
-
-    message.textContent = text;
-
-    message.style.display = "block";
-
-    message.style.background =
-    success ? "#e7f7eb" : "#ffe8e8";
-
+// ฟังก์ชันจัดการแสดงผลข้อความ Error 
+function showError(msg) {
+    const errorBox = document.getElementById("error-message");
+    errorBox.textContent = msg;
+    errorBox.style.display = "block";
 }
 
+function hideError() {
+    document.getElementById("error-message").style.display = "none";
+}
+
+// ฟังก์ชันแสดงหน้าสำเร็จ
+function showSuccessScreen() {
+    document.getElementById("booking-section").style.display = "none";
+    document.getElementById("success-section").style.display = "block";
+    
+    // ใส่ Emoji สีให้ตรงกับที่จอง
+    let emoji = "";
+    if(selectedColor === "แดง") emoji = "🔴";
+    else if(selectedColor === "แสด") emoji = "🟠";
+    else if(selectedColor === "เขียว") emoji = "🟢";
+    
+    document.getElementById("success-color-text").innerHTML = `สีที่จอง: ${emoji} <b>${selectedColor}</b>`;
+}
 
 // โหลดจำนวนตอนเปิดเว็บ
 loadStock();
 
-
-// เช็กจำนวนใหม่ทุก 5 วินาที
+// เช็กจำนวนใหม่แบบ Real-time ทุก 5 วินาที
 setInterval(loadStock, 5000);
 
 </script>
-
 </body>
-
 </html>
