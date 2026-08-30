@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>จองเสื้อปุ๋ย</title>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.subtitle {
+    text-align: center;
+    color: #777;
+}
+
+.stock {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.stock-box {
+    flex: 1;
+    text-align: center;
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+.stock-number {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    margin-top: 6px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.colors {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.color-button {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+}
+
+.color-button.selected {
+    border-color: black;
+}
+
+button.submit {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: #222;
+    color: white;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    display: none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>👕 เสื้อปุ๋ย</h1>
+
+<div class="subtitle">
+แจกฟรี • ฟรีไซส์
+</div>
+
+<div class="stock">
+
+<div class="stock-box">
+🔴 แดง
+<div class="stock-number" id="red">9</div>
+ตัว
+</div>
+
+<div class="stock-box">
+🟠 แสด
+<div class="stock-number" id="orange">9</div>
+ตัว
+</div>
+
+<div class="stock-box">
+🟢 เขียว
+<div class="stock-number" id="green">9</div>
+ตัว
+</div>
+
+</div>
+
+<label>
+ชื่อ-นามสกุล
+</label>
+
+<input
+id="name"
+placeholder="กรอกชื่อของคุณ"
+>
+
+<label>
+เลขที่
+</label>
+
+<input
+id="number"
+placeholder="เช่น 16"
+>
+
+<label>
+เลือกสีเสื้อ
+</label>
+
+<div class="colors">
+
+<button
+class="color-button"
+onclick="selectColor('แดง', this)"
+>
+🔴 แดง
+</button>
+
+<button
+class="color-button"
+onclick="selectColor('แสด', this)"
+>
+🟠 แสด
+</button>
+
+<button
+class="color-button"
+onclick="selectColor('เขียว', this)"
+>
+🟢 เขียว
+</button>
+
+</div>
+
+<button
+class="submit"
+onclick="reserve()"
+>
+🎁 ยืนยันการจอง
+</button>
+
+<div
+id="message"
+class="message"
+></div>
+
+</div>
+
+<script>
+
+// =================================
+// ใส่ Web App URL ของเรา
+// =================================
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyoQ81-3XzmNN0SriUVAzFqVcieLpstWsF_KJY6B_USmNw2eV90Tu7zrs17OFUjsVN8/exec";
+
+
+let selectedColor = "";
+
+
+function selectColor(color, button) {
+
+    selectedColor = color;
+
+    document
+    .querySelectorAll(".color-button")
+    .forEach(btn =>
+        btn.classList.remove("selected")
+    );
+
+    button.classList.add("selected");
+
+}
+
+
+async function loadStock() {
+
+    try {
+
+        const response =
+        await fetch(API_URL);
+
+        const stock =
+        await response.json();
+
+        document.getElementById("red")
+        .textContent = stock["แดง"];
+
+        document.getElementById("orange")
+        .textContent = stock["แสด"];
+
+        document.getElementById("green")
+        .textContent = stock["เขียว"];
+
+    }
+
+    catch(error) {
+
+        console.log(error);
+
+    }
+
+}
+
+
+async function reserve() {
+
+    const name =
+    document.getElementById("name")
+    .value.trim();
+
+    const number =
+    document.getElementById("number")
+    .value.trim();
+
+
+    if (!name || !number || !selectedColor) {
+
+        showMessage(
+            "กรุณากรอกข้อมูลให้ครบ",
+            false
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+        await fetch(API_URL, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                "text/plain;charset=utf-8"
+            },
+
+            body: JSON.stringify({
+
+                name: name,
+
+                number: number,
+
+                color: selectedColor
+
+            })
+
+        });
+
+
+        const result =
+        await response.json();
+
+
+        if (result.ok) {
+
+            showMessage(
+                "🎉 จองสำเร็จ! เสื้อของคุณถูกจัดไว้ให้แล้ว ❤️",
+                true
+            );
+
+            document
+            .getElementById("name")
+            .value = "";
+
+            document
+            .getElementById("number")
+            .value = "";
+
+            selectedColor = "";
+
+            document
+            .querySelectorAll(".color-button")
+            .forEach(btn =>
+                btn.classList.remove("selected")
+            );
+
+            loadStock();
+
+        }
+
+        else {
+
+            showMessage(
+                result.message,
+                false
+            );
+
+            loadStock();
+
+        }
+
+    }
+
+    catch(error) {
+
+        showMessage(
+            "เกิดข้อผิดพลาด กรุณาลองใหม่",
+            false
+        );
+
+    }
+
+}
+
+
+function showMessage(text, success) {
+
+    const message =
+    document.getElementById("message");
+
+    message.textContent = text;
+
+    message.style.display = "block";
+
+    message.style.background =
+    success ? "#e7f7eb" : "#ffe8e8";
+
+}
+
+
+// โหลดจำนวนตอนเปิดเว็บ
+loadStock();
+
+
+// เช็กจำนวนใหม่ทุก 5 วินาที
+setInterval(loadStock, 5000);
+
+</script>
+
+</body>
+
+</html>
