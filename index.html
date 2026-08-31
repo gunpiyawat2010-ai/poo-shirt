@@ -213,6 +213,32 @@
             align-items: center;
             justify-content: center;
             border: 1px solid #f1f5f9;
+            position: relative;
+            cursor: zoom-in;
+        }
+
+        .shirt-img-container::after {
+            content: '🔍';
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            background: rgba(255, 255, 255, 0.85);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            opacity: 0.85;
+            transition: opacity 0.2s, transform 0.2s;
+            pointer-events: none;
+        }
+
+        .shirt-img-container:hover::after {
+            opacity: 1;
+            transform: scale(1.1);
         }
 
         .shirt-img {
@@ -223,8 +249,8 @@
             transition: transform 0.3s ease;
         }
 
-        .color-card:hover:not(.disabled) .shirt-img {
-            transform: scale(1.05);
+        .shirt-img-container:hover .shirt-img {
+            transform: scale(1.06);
         }
 
         .stock-amount {
@@ -373,6 +399,84 @@
             color: #2563eb;
             font-weight: 500;
         }
+
+        /* Image Zoom Lightbox Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            position: relative;
+            max-width: 90vw;
+            max-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: scale(0.85);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-img {
+            max-width: 90vw;
+            max-height: 85vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: -14px;
+            right: -14px;
+            width: 38px;
+            height: 38px;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+            line-height: 1;
+        }
+
+        .modal-close-btn:hover {
+            transform: scale(1.1);
+            background-color: #f3f4f6;
+            color: #ef4444;
+        }
     </style>
 </head>
 <body>
@@ -411,7 +515,7 @@
             <div id="btn-red" class="color-card" onclick="selectColor('แดง', 'btn-red')">
                 <span class="check-mark">✓</span>
                 <div class="card-color-name">🔴 แดง</div>
-                <div class="shirt-img-container">
+                <div class="shirt-img-container" onclick="openModal('red-shirt.jpg', 'เสื้อสีแดง', event)">
                     <img src="red-shirt.jpg" alt="เสื้อสีแดง" class="shirt-img">
                 </div>
                 <div class="stock-amount">เหลือ <span id="red-num">-</span> ตัว</div>
@@ -424,7 +528,7 @@
             <div id="btn-orange" class="color-card" onclick="selectColor('แสด', 'btn-orange')">
                 <span class="check-mark">✓</span>
                 <div class="card-color-name">🟠 แสด</div>
-                <div class="shirt-img-container">
+                <div class="shirt-img-container" onclick="openModal('orange-shirt.jpg', 'เสื้อสีแสด', event)">
                     <img src="orange-shirt.jpg" alt="เสื้อสีแสด" class="shirt-img">
                 </div>
                 <div class="stock-amount">เหลือ <span id="orange-num">-</span> ตัว</div>
@@ -437,7 +541,7 @@
             <div id="btn-green" class="color-card" onclick="selectColor('เขียว', 'btn-green')">
                 <span class="check-mark">✓</span>
                 <div class="card-color-name">🟢 เขียว</div>
-                <div class="shirt-img-container">
+                <div class="shirt-img-container" onclick="openModal('green-shirt.jpg', 'เสื้อสีเขียว', event)">
                     <img src="green-shirt.jpg" alt="เสื้อสีเขียว" class="shirt-img">
                 </div>
                 <div class="stock-amount">เหลือ <span id="green-num">-</span> ตัว</div>
@@ -466,6 +570,14 @@
 
 </div>
 
+<!-- Image Lightbox Modal -->
+<div id="image-modal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-container" onclick="event.stopPropagation()">
+        <button class="modal-close-btn" onclick="closeModal(event)" aria-label="ปิด">&times;</button>
+        <img id="modal-img" src="" alt="ภาพขยาย">
+    </div>
+</div>
+
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyoQ81-3XzmNN0SriUVAzFqVcieLpstWsF_KJY6B_USmNw2eV90Tu7zrs17OFUjsVN8/exec";
 let selectedColor = "";
@@ -490,6 +602,39 @@ function selectColor(color, btnId) {
     
     hideError(); 
 }
+
+/* Image Zoom Modal Functions */
+function openModal(imgSrc, altText, event) {
+    if (event) {
+        event.stopPropagation(); // Prevents selection of color card when image is clicked
+    }
+    const modal = document.getElementById("image-modal");
+    const modalImg = document.getElementById("modal-img");
+    if (modal && modalImg) {
+        modalImg.src = imgSrc;
+        modalImg.alt = altText || "ภาพเสื้อขยาย";
+        modal.classList.add("active");
+        document.body.style.overflow = "hidden"; // Prevent scrolling behind modal
+    }
+}
+
+function closeModal(event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    const modal = document.getElementById("image-modal");
+    if (modal) {
+        modal.classList.remove("active");
+        document.body.style.overflow = ""; // Restore scrolling
+    }
+}
+
+// Close modal when pressing Escape key
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") {
+        closeModal();
+    }
+});
 
 async function loadStock() {
     try {
