@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>เชิญจองเสื้อปุ๋ยฟรีโดย กัน ปิยวัฒน์ ขอการสนับสนุนมาแจกให้เพื่อน ๆ ในห้อง</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -14,7 +14,7 @@
         }
 
         body {
-            background-color: #f3f6f9;
+            background-color: #f4f6f9;
             color: #333;
             padding: 20px 15px;
             display: flex;
@@ -23,7 +23,7 @@
 
         .app-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
         }
 
         .header {
@@ -41,7 +41,7 @@
             display: inline-block;
             background: #ffecb3;
             color: #d97706;
-            padding: 4px 12px;
+            padding: 4px 14px;
             border-radius: 20px;
             font-size: 14px;
             font-weight: 600;
@@ -74,68 +74,6 @@
             color: #666;
             font-size: 14px;
         }
-
-        .stock-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .stock-card {
-            background: white;
-            padding: 15px 10px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .stock-color-name {
-            font-weight: 500;
-            font-size: 15px;
-            margin-bottom: 5px;
-        }
-
-        .stock-amount {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-
-        .stock-amount span {
-            font-size: 22px;
-            font-weight: 700;
-            color: #111;
-        }
-
-        .progress-bg {
-            width: 100%;
-            height: 6px;
-            background: #e5e7eb;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.3s ease;
-        }
-        #red-progress { background: #ef4444; }
-        #orange-progress { background: #f97316; }
-        #green-progress { background: #22c55e; }
-
-        .stock-status {
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .status-available { color: #22c55e; }
-        .status-low { color: #f59e0b; }
-        .status-empty { color: #ef4444; }
 
         .form-card {
             background: white;
@@ -183,37 +121,55 @@
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
         }
 
-        .colors {
+        /* E-Commerce Product Cards Grid */
+        .color-cards-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 25px;
         }
 
-        .color-button {
-            padding: 12px 5px;
+        @media (max-width: 420px) {
+            .color-cards-grid {
+                gap: 8px;
+            }
+        }
+
+        .color-card {
+            background: #ffffff;
             border: 2px solid #e5e7eb;
-            border-radius: 14px;
-            background: white;
-            font-size: 15px;
-            font-weight: 500;
+            border-radius: 16px;
+            padding: 12px 10px;
+            text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            user-select: none;
         }
 
-        .color-button:active:not(.disabled) {
-            transform: scale(0.96);
+        .color-card:hover:not(.disabled) {
+            border-color: #93c5fd;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
         }
 
-        .color-button.selected {
+        .color-card.selected {
             border-color: #2563eb;
-            background: #eff6ff;
-            color: #1d4ed8;
+            background: #f0f7ff;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2), 0 8px 20px rgba(37, 99, 235, 0.12);
+        }
+
+        .color-card.disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            background: #f9fafb;
+            border-color: #e5e7eb;
+            filter: grayscale(85%);
         }
 
         .check-mark {
@@ -223,13 +179,14 @@
             right: -8px;
             background: #2563eb;
             color: white;
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            font-size: 12px;
-            line-height: 22px;
+            font-size: 13px;
+            line-height: 24px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            z-index: 2;
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -238,12 +195,96 @@
             100% { transform: scale(1); }
         }
 
-        .color-button.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .card-color-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .shirt-img-container {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f8fafc;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #f1f5f9;
+        }
+
+        .shirt-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .color-card:hover:not(.disabled) .shirt-img {
+            transform: scale(1.05);
+        }
+
+        .stock-amount {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        .stock-amount span {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .progress-bg {
+            width: 100%;
+            height: 5px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        #red-progress { background: #ef4444; }
+        #orange-progress { background: #f97316; }
+        #green-progress { background: #22c55e; }
+
+        .stock-status {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .status-available { color: #22c55e; }
+        .status-low { color: #f59e0b; }
+        .status-empty { color: #ef4444; }
+
+        .select-tag {
+            width: 100%;
+            padding: 8px 0;
+            border-radius: 10px;
             background: #f3f4f6;
-            border-color: #e5e7eb;
-            filter: grayscale(100%);
+            color: #4b5563;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .color-card.selected .select-tag {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .color-card.disabled .select-tag {
+            background: #e5e7eb;
+            color: #9ca3af;
         }
 
         button.submit {
@@ -350,27 +391,6 @@
         <div class="gift-text">🎁 เชิญจองเสื้อปุ๋ยฟรีโดย กัน ปิยวัฒน์ ขอการสนับสนุนมาแจกให้เพื่อน ๆ ในห้อง</div>
     </header>
 
-    <div class="stock-container">
-        <div class="stock-card">
-            <div class="stock-color-name">🔴 แดง</div>
-            <div class="stock-amount">เหลือ <span id="red-num">-</span> ตัว</div>
-            <div class="progress-bg"><div class="progress-fill" id="red-progress" style="width: 100%;"></div></div>
-            <div class="stock-status" id="red-status">กำลังโหลด...</div>
-        </div>
-        <div class="stock-card">
-            <div class="stock-color-name">🟠 แสด</div>
-            <div class="stock-amount">เหลือ <span id="orange-num">-</span> ตัว</div>
-            <div class="progress-bg"><div class="progress-fill" id="orange-progress" style="width: 100%;"></div></div>
-            <div class="stock-status" id="orange-status">กำลังโหลด...</div>
-        </div>
-        <div class="stock-card">
-            <div class="stock-color-name">🟢 เขียว</div>
-            <div class="stock-amount">เหลือ <span id="green-num">-</span> ตัว</div>
-            <div class="progress-bg"><div class="progress-fill" id="green-progress" style="width: 100%;"></div></div>
-            <div class="stock-status" id="green-status">กำลังโหลด...</div>
-        </div>
-    </div>
-
     <div id="booking-section" class="form-card">
         <div class="section-title">📝 ข้อมูลผู้จอง</div>
         
@@ -385,19 +405,46 @@
         </div>
 
         <div class="section-title" style="margin-top: 25px;">🎨 เลือกสีเสื้อ</div>
-        <div class="colors">
-            <button id="btn-red" class="color-button" onclick="selectColor('แดง', 'btn-red')">
+        
+        <div class="color-cards-grid">
+            <!-- Red Shirt Card -->
+            <div id="btn-red" class="color-card" onclick="selectColor('แดง', 'btn-red')">
                 <span class="check-mark">✓</span>
-                🔴 แดง
-            </button>
-            <button id="btn-orange" class="color-button" onclick="selectColor('แสด', 'btn-orange')">
+                <div class="card-color-name">🔴 แดง</div>
+                <div class="shirt-img-container">
+                    <img src="red-shirt.jpg" alt="เสื้อสีแดง" class="shirt-img">
+                </div>
+                <div class="stock-amount">เหลือ <span id="red-num">-</span> ตัว</div>
+                <div class="progress-bg"><div class="progress-fill" id="red-progress" style="width: 100%;"></div></div>
+                <div class="stock-status" id="red-status">กำลังโหลด...</div>
+                <div class="select-tag">เลือกสีนี้</div>
+            </div>
+
+            <!-- Orange Shirt Card -->
+            <div id="btn-orange" class="color-card" onclick="selectColor('แสด', 'btn-orange')">
                 <span class="check-mark">✓</span>
-                🟠 แสด
-            </button>
-            <button id="btn-green" class="color-button" onclick="selectColor('เขียว', 'btn-green')">
+                <div class="card-color-name">🟠 แสด</div>
+                <div class="shirt-img-container">
+                    <img src="orange-shirt.jpg" alt="เสื้อสีแสด" class="shirt-img">
+                </div>
+                <div class="stock-amount">เหลือ <span id="orange-num">-</span> ตัว</div>
+                <div class="progress-bg"><div class="progress-fill" id="orange-progress" style="width: 100%;"></div></div>
+                <div class="stock-status" id="orange-status">กำลังโหลด...</div>
+                <div class="select-tag">เลือกสีนี้</div>
+            </div>
+
+            <!-- Green Shirt Card -->
+            <div id="btn-green" class="color-card" onclick="selectColor('เขียว', 'btn-green')">
                 <span class="check-mark">✓</span>
-                🟢 เขียว
-            </button>
+                <div class="card-color-name">🟢 เขียว</div>
+                <div class="shirt-img-container">
+                    <img src="green-shirt.jpg" alt="เสื้อสีเขียว" class="shirt-img">
+                </div>
+                <div class="stock-amount">เหลือ <span id="green-num">-</span> ตัว</div>
+                <div class="progress-bg"><div class="progress-fill" id="green-progress" style="width: 100%;"></div></div>
+                <div class="stock-status" id="green-status">กำลังโหลด...</div>
+                <div class="select-tag">เลือกสีนี้</div>
+            </div>
         </div>
 
         <div id="error-message" class="message-box message-error"></div>
@@ -427,17 +474,19 @@ const MAX_STOCK = 9;
 function selectColor(color, btnId) {
     const button = document.getElementById(btnId);
     
-    if (button.classList.contains("disabled")) return;
+    if (!button || button.classList.contains("disabled")) return;
 
     selectedColor = color;
 
-    document.querySelectorAll(".color-button").forEach(btn => {
+    document.querySelectorAll(".color-card").forEach(btn => {
         btn.classList.remove("selected");
-        btn.querySelector(".check-mark").style.display = "none";
+        const check = btn.querySelector(".check-mark");
+        if (check) check.style.display = "none";
     });
 
     button.classList.add("selected");
-    button.querySelector(".check-mark").style.display = "block";
+    const checkMark = button.querySelector(".check-mark");
+    if (checkMark) checkMark.style.display = "block";
     
     hideError(); 
 }
@@ -458,32 +507,43 @@ async function loadStock() {
 function updateStockUI(colorId, currentStock, btnId) {
     let stockNum = parseInt(currentStock) || 0;
     
-    document.getElementById(colorId + "-num").textContent = stockNum;
+    const numEl = document.getElementById(colorId + "-num");
+    if (numEl) numEl.textContent = stockNum;
     
     let percent = (stockNum / MAX_STOCK) * 100;
     if (percent > 100) percent = 100;
-    document.getElementById(colorId + "-progress").style.width = percent + "%";
+    const progressEl = document.getElementById(colorId + "-progress");
+    if (progressEl) progressEl.style.width = percent + "%";
 
     const statusEl = document.getElementById(colorId + "-status");
     const btnEl = document.getElementById(btnId);
 
+    if (!btnEl) return;
+
     if (stockNum === 0) {
-        statusEl.textContent = "❌ หมดแล้ว";
-        statusEl.className = "stock-status status-empty";
+        if (statusEl) {
+            statusEl.textContent = "❌ หมดแล้ว";
+            statusEl.className = "stock-status status-empty";
+        }
         btnEl.classList.add("disabled");
         
         if (btnEl.classList.contains("selected")) {
             btnEl.classList.remove("selected");
-            btnEl.querySelector(".check-mark").style.display = "none";
+            const check = btnEl.querySelector(".check-mark");
+            if (check) check.style.display = "none";
             selectedColor = "";
         }
     } else if (stockNum <= 3) {
-        statusEl.textContent = "⚠️ เหลือน้อย";
-        statusEl.className = "stock-status status-low";
+        if (statusEl) {
+            statusEl.textContent = "⚠️ เหลือน้อย";
+            statusEl.className = "stock-status status-low";
+        }
         btnEl.classList.remove("disabled");
     } else {
-        statusEl.textContent = "✅ มีของ";
-        statusEl.className = "stock-status status-available";
+        if (statusEl) {
+            statusEl.textContent = "✅ มีของ";
+            statusEl.className = "stock-status status-available";
+        }
         btnEl.classList.remove("disabled");
     }
 }
@@ -539,12 +599,15 @@ async function reserve() {
 
 function showError(msg) {
     const errorBox = document.getElementById("error-message");
-    errorBox.textContent = msg;
-    errorBox.style.display = "block";
+    if (errorBox) {
+        errorBox.textContent = msg;
+        errorBox.style.display = "block";
+    }
 }
 
 function hideError() {
-    document.getElementById("error-message").style.display = "none";
+    const errorBox = document.getElementById("error-message");
+    if (errorBox) errorBox.style.display = "none";
 }
 
 function showSuccessScreen() {
