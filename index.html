@@ -214,31 +214,6 @@
             justify-content: center;
             border: 1px solid #f1f5f9;
             position: relative;
-            cursor: zoom-in;
-        }
-
-        .shirt-img-container::after {
-            content: '🔍';
-            position: absolute;
-            bottom: 6px;
-            right: 6px;
-            background: rgba(255, 255, 255, 0.85);
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-            opacity: 0.85;
-            transition: opacity 0.2s, transform 0.2s;
-            pointer-events: none;
-        }
-
-        .shirt-img-container:hover::after {
-            opacity: 1;
-            transform: scale(1.1);
         }
 
         .shirt-img {
@@ -246,11 +221,32 @@
             height: 100%;
             object-fit: cover;
             border-radius: 12px;
-            transition: transform 0.3s ease;
         }
 
-        .shirt-img-container:hover .shirt-img {
-            transform: scale(1.06);
+        /* ปุ่มดูรูปใหญ่ในหน้าปกติ (เป็นปุ่ม HTML จริง กดได้ทั้งมือถือและคอม) */
+        .view-large-btn {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #e5e7eb;
+            color: #111827;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 6px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 10;
+            transition: transform 0.1s, background 0.1s;
+        }
+        
+        .view-large-btn:active {
+            transform: scale(0.92);
+            background: #f3f4f6;
         }
 
         .stock-amount {
@@ -400,16 +396,18 @@
             font-weight: 500;
         }
 
-        /* Image Zoom Lightbox Modal Styles */
+        /* -------------------------------------
+           Interactive Image Viewer (Lightbox) 
+           ------------------------------------- */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            background: rgba(0, 0, 0, 0.9); /* พื้นหลังสีดำโปร่งแสง */
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -417,7 +415,6 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
-            padding: 20px;
         }
 
         .modal-overlay.active {
@@ -425,57 +422,87 @@
             pointer-events: auto;
         }
 
-        .modal-container {
+        .zoom-container {
             position: relative;
-            max-width: 90vw;
-            max-height: 85vh;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transform: scale(0.85);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            touch-action: none; /* ป้องกันไม่ให้หน้าเว็บหลักเลื่อนเวลาสัมผัสรูป */
+            overflow: hidden;
         }
 
-        .modal-overlay.active .modal-container {
-            transform: scale(1);
-        }
-
-        .modal-img {
-            max-width: 90vw;
-            max-height: 85vh;
+        #modal-img {
+            max-width: 80vw;
+            max-height: 80vh;
             width: auto;
             height: auto;
-            object-fit: contain;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            object-fit: contain; /* รักษาสัดส่วนภาพ เห็นครบทั้งตัว */
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            will-change: transform;
+            transform-origin: center center;
+            cursor: grab;
         }
 
-        .modal-close-btn {
+        #modal-img:active {
+            cursor: grabbing;
+        }
+
+        /* Class เพื่อให้รูปภาพ animate อย่างนุ่มนวลเวลาใช้ปุ่มกด แต่ถ้าลากนิ้วจะเอาออกเพื่อให้ตอบสนองทันที */
+        .smooth-trans {
+            transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* กลุ่มปุ่มควบคุม (ซูม/ปิด) */
+        .modal-controls-top {
             position: absolute;
-            top: -14px;
-            right: -14px;
-            width: 38px;
-            height: 38px;
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+
+        .modal-controls-bottom {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            background: rgba(25, 25, 25, 0.85);
+            padding: 8px 16px;
+            border-radius: 50px;
+            z-index: 10000;
+            backdrop-filter: blur(4px);
+        }
+
+        .ctrl-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            font-size: 24px;
-            font-weight: bold;
-            color: #111827;
-            cursor: pointer;
+            font-size: 20px;
+            font-weight: 500;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-            z-index: 10000;
-            transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-            line-height: 1;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
         }
 
-        .modal-close-btn:hover {
-            transform: scale(1.1);
-            background-color: #f3f4f6;
-            color: #ef4444;
+        .ctrl-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.9);
+        }
+
+        .ctrl-btn.close-btn {
+            background: rgba(239, 68, 68, 0.8);
+            border-color: rgba(239, 68, 68, 1);
+            font-size: 24px;
+            line-height: 1;
         }
     </style>
 </head>
@@ -515,8 +542,12 @@
             <div id="btn-red" class="color-card" onclick="selectColor('แดง', 'btn-red')">
                 <span class="check-mark">✓</span>
                 <div class="card-color-name">🔴 แดง</div>
-                <div class="shirt-img-container" onclick="openModal('red-shirt.jpg', 'เสื้อสีแดง', event)">
+                <div class="shirt-img-container">
                     <img src="red-shirt.jpg" alt="เสื้อสีแดง" class="shirt-img">
+                    <!-- ปุ่มสำหรับดูรูปใหญ่แยกจากการเลือกสี ใช้ stopPropagation ภายในฟังก์ชัน -->
+                    <button type="button" class="view-large-btn" onclick="openModal('red-shirt.jpg', 'เสื้อสีแดง', event)">
+                        🔍 ดูรูปใหญ่
+                    </button>
                 </div>
                 <div class="stock-amount">เหลือ <span id="red-num">-</span> ตัว</div>
                 <div class="progress-bg"><div class="progress-fill" id="red-progress" style="width: 100%;"></div></div>
@@ -528,8 +559,11 @@
             <div id="btn-orange" class="color-card" onclick="selectColor('แสด', 'btn-orange')">
                 <span class="check-mark">✓</span>
                 <div class="card-color-name">🟠 แสด</div>
-                <div class="shirt-img-container" onclick="openModal('orange-shirt.jpg', 'เสื้อสีแสด', event)">
+                <div class="shirt-img-container">
                     <img src="orange-shirt.jpg" alt="เสื้อสีแสด" class="shirt-img">
+                    <button type="button" class="view-large-btn" onclick="openModal('orange-shirt.jpg', 'เสื้อสีแสด', event)">
+                        🔍 ดูรูปใหญ่
+                    </button>
                 </div>
                 <div class="stock-amount">เหลือ <span id="orange-num">-</span> ตัว</div>
                 <div class="progress-bg"><div class="progress-fill" id="orange-progress" style="width: 100%;"></div></div>
@@ -541,8 +575,11 @@
             <div id="btn-green" class="color-card" onclick="selectColor('เขียว', 'btn-green')">
                 <span class="check-mark">✓</span>
                 <div class="card-color-name">🟢 เขียว</div>
-                <div class="shirt-img-container" onclick="openModal('green-shirt.jpg', 'เสื้อสีเขียว', event)">
+                <div class="shirt-img-container">
                     <img src="green-shirt.jpg" alt="เสื้อสีเขียว" class="shirt-img">
+                    <button type="button" class="view-large-btn" onclick="openModal('green-shirt.jpg', 'เสื้อสีเขียว', event)">
+                        🔍 ดูรูปใหญ่
+                    </button>
                 </div>
                 <div class="stock-amount">เหลือ <span id="green-num">-</span> ตัว</div>
                 <div class="progress-bg"><div class="progress-fill" id="green-progress" style="width: 100%;"></div></div>
@@ -570,15 +607,27 @@
 
 </div>
 
-<!-- Image Lightbox Modal -->
+<!-- Interactive Image Lightbox (Zoom & Pan) -->
 <div id="image-modal" class="modal-overlay" onclick="closeModal(event)">
-    <div class="modal-container" onclick="event.stopPropagation()">
-        <button class="modal-close-btn" onclick="closeModal(event)" aria-label="ปิด">&times;</button>
+    <div class="modal-controls-top">
+        <button type="button" class="ctrl-btn close-btn" onclick="closeModal(event)">×</button>
+    </div>
+    
+    <div id="zoom-container" class="zoom-container" onclick="event.stopPropagation()">
         <img id="modal-img" src="" alt="ภาพขยาย">
+    </div>
+
+    <div class="modal-controls-bottom" onclick="event.stopPropagation()">
+        <button type="button" class="ctrl-btn" onclick="zoomOut()">−</button>
+        <button type="button" class="ctrl-btn" onclick="resetZoom()">↺</button>
+        <button type="button" class="ctrl-btn" onclick="zoomIn()">＋</button>
     </div>
 </div>
 
 <script>
+// ============================================
+// SYSTEM LOGIC: ระบบการจอง (ห้ามแก้ส่วนนี้)
+// ============================================
 const API_URL = "https://script.google.com/macros/s/AKfycbyoQ81-3XzmNN0SriUVAzFqVcieLpstWsF_KJY6B_USmNw2eV90Tu7zrs17OFUjsVN8/exec";
 let selectedColor = "";
 const MAX_STOCK = 9; 
@@ -602,39 +651,6 @@ function selectColor(color, btnId) {
     
     hideError(); 
 }
-
-/* Image Zoom Modal Functions */
-function openModal(imgSrc, altText, event) {
-    if (event) {
-        event.stopPropagation(); // Prevents selection of color card when image is clicked
-    }
-    const modal = document.getElementById("image-modal");
-    const modalImg = document.getElementById("modal-img");
-    if (modal && modalImg) {
-        modalImg.src = imgSrc;
-        modalImg.alt = altText || "ภาพเสื้อขยาย";
-        modal.classList.add("active");
-        document.body.style.overflow = "hidden"; // Prevent scrolling behind modal
-    }
-}
-
-function closeModal(event) {
-    if (event) {
-        event.stopPropagation();
-    }
-    const modal = document.getElementById("image-modal");
-    if (modal) {
-        modal.classList.remove("active");
-        document.body.style.overflow = ""; // Restore scrolling
-    }
-}
-
-// Close modal when pressing Escape key
-document.addEventListener("keydown", function(e) {
-    if (e.key === "Escape") {
-        closeModal();
-    }
-});
 
 async function loadStock() {
     try {
@@ -769,6 +785,174 @@ function showSuccessScreen() {
 
 loadStock();
 setInterval(loadStock, 5000);
+
+// ============================================
+// IMAGE VIEWER LOGIC: ระบบเปิดและขยายรูป
+// ============================================
+const modal = document.getElementById('image-modal');
+const modalImg = document.getElementById('modal-img');
+const zoomContainer = document.getElementById('zoom-container');
+
+// State ของการ Zoom & Pan
+let currentScale = 1;
+let isPanning = false;
+let startX = 0, startY = 0;
+let currentX = 0, currentY = 0;
+
+// State สำหรับ Pinch-to-Zoom (สัมผัส 2 นิ้ว)
+let initialPinchDistance = 0;
+let initialScaleAtPinch = 1;
+
+// ฟังก์ชันเปิด-ปิด
+function openModal(imgSrc, altText, e) {
+    if (e) e.stopPropagation(); // สำคัญมาก: ป้องกันไม่ให้การกดรูปใหญ่ส่งไปเลือกสี
+    
+    modalImg.src = imgSrc;
+    modalImg.alt = altText || "ภาพเสื้อขยาย";
+    
+    resetZoom(); // รีเซ็ตขนาดและตำแหน่งรูปทุกครั้งที่เปิด
+    
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden"; // ล็อกหน้าเว็บด้านหลังไม่ให้เลื่อน
+}
+
+function closeModal(e) {
+    if (e && e.target !== modal && !e.target.classList.contains('close-btn')) {
+        return;
+    }
+    if (e) e.stopPropagation();
+    
+    modal.classList.remove("active");
+    document.body.style.overflow = ""; // ปลดล็อกหน้าเว็บ
+}
+
+// อัปเดต CSS Transform เพื่อให้รูปแสดงผลตาม Scale และ Pan
+function updateTransform(useTransition = false) {
+    if (currentScale <= 1) {
+        currentScale = 1;
+        currentX = 0;
+        currentY = 0;
+    }
+    if (currentScale > 4) {
+        currentScale = 4;
+    }
+    
+    if (useTransition) {
+        modalImg.classList.add('smooth-trans');
+    } else {
+        modalImg.classList.remove('smooth-trans');
+    }
+    
+    modalImg.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+}
+
+// ฟังก์ชันปุ่มกด
+function zoomIn() {
+    currentScale += 0.5;
+    updateTransform(true);
+}
+
+function zoomOut() {
+    currentScale -= 0.5;
+    updateTransform(true);
+}
+
+function resetZoom() {
+    currentScale = 1;
+    currentX = 0;
+    currentY = 0;
+    updateTransform(true);
+}
+
+// --- TOUCH EVENTS (สำหรับ Mobile) ---
+zoomContainer.addEventListener('touchstart', function(e) {
+    e.preventDefault(); // ป้องกันพฤติกรรมพื้นฐานบนมือถือ (เช่น ดึงเพื่อรีเฟรชหน้า)
+    
+    if (e.touches.length === 2) {
+        // แตะ 2 นิ้ว: เริ่ม Pinch-to-Zoom
+        isPanning = false;
+        initialPinchDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+        initialScaleAtPinch = currentScale;
+    } else if (e.touches.length === 1 && currentScale > 1) {
+        // แตะ 1 นิ้ว และรูปถูกซูมอยู่: เริ่ม Pan (ลากรูป)
+        isPanning = true;
+        startX = e.touches[0].clientX - currentX;
+        startY = e.touches[0].clientY - currentY;
+    }
+}, { passive: false });
+
+zoomContainer.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    
+    if (e.touches.length === 2) {
+        // แตะ 2 นิ้ว: กำลังซูมเข้า/ออก
+        let currentDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+        currentScale = initialScaleAtPinch * (currentDistance / initialPinchDistance);
+        updateTransform(false); // ปิด transition เพื่อให้ตอบสนองทันที
+    } else if (e.touches.length === 1 && isPanning && currentScale > 1) {
+        // แตะ 1 นิ้ว: กำลังลากรูป
+        currentX = e.touches[0].clientX - startX;
+        currentY = e.touches[0].clientY - startY;
+        updateTransform(false);
+    }
+}, { passive: false });
+
+zoomContainer.addEventListener('touchend', function(e) {
+    isPanning = false;
+    // ถ้ารูปซูมออกจนเล็กกว่า 1 ให้เด้งกลับมา 1
+    if (currentScale < 1) {
+        resetZoom();
+    }
+});
+
+// --- MOUSE EVENTS (สำหรับ Desktop) ---
+zoomContainer.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    if (currentScale > 1) {
+        isPanning = true;
+        startX = e.clientX - currentX;
+        startY = e.clientY - currentY;
+    }
+});
+
+zoomContainer.addEventListener('mousemove', function(e) {
+    if (!isPanning) return;
+    currentX = e.clientX - startX;
+    currentY = e.clientY - startY;
+    updateTransform(false);
+});
+
+zoomContainer.addEventListener('mouseup', function() {
+    isPanning = false;
+});
+
+zoomContainer.addEventListener('mouseleave', function() {
+    isPanning = false;
+});
+
+// เลื่อนลูกกลิ้งเมาส์เพื่อซูม (Desktop)
+zoomContainer.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    if (e.deltaY > 0) {
+        currentScale -= 0.2; // เลื่อนลง -> ซูมออก
+    } else {
+        currentScale += 0.2; // เลื่อนขึ้น -> ซูมเข้า
+    }
+    updateTransform(false); // ใช้ false ให้ซูมตามลูกกลิ้งลื่นๆ
+}, { passive: false });
+
+// กดปุ่ม Esc บนคีย์บอร์ดเพื่อปิด (Desktop)
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape" && modal.classList.contains("active")) {
+        closeModal();
+    }
+});
 
 </script>
 </body>
